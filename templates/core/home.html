@@ -1,0 +1,119 @@
+{% extends 'base.html' %}
+{% block title %}THUNA - Free Online File Converter, Compressor & PDF Tools{% endblock %}
+{% block meta_description %}Convert, compress, and merge documents, PDFs, images, spreadsheets, and media up to 500 MB online for free. Fast, private, and secure in-browser processing with zero registration.{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <header class="topbar">
+        <div>
+            <p class="eyebrow">NO ACCOUNT REQUIRED &bull; UP TO 500 MB</p>
+            <h1>Hi<br><span>How can we help with your files today?</span></h1>
+        </div>
+        <a class="new-button" href="{% url 'compress' %}">
+            <svg class="ui-icon" aria-hidden="true"><use href="#icon-upload"></use></svg>
+            <span>New</span>
+        </a>
+    </header>
+
+    <div class="search" data-home-search>
+        <svg class="ui-icon" aria-hidden="true"><use href="#icon-search"></use></svg>
+        <input aria-label="Search files, formats and tools" placeholder="Search files, tools or formats (PDF, DOCX, PNG, JPG, MP4...)" autocomplete="off">
+    </div>
+
+    <section class="hero-grid" data-search-group>
+        <a class="feature-card large peach" data-search-item="compress files reduce size quality slider pdf image video" href="{% url 'compress' %}">
+            <span class="icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-compress"></use></svg></span>
+            <div>
+                <p class="eyebrow">MAKE IT LIGHTER</p>
+                <h2>Compress<br>your files</h2>
+                <p>Reduce file size dynamically with an interactive quality slider. Up to 500 MB.</p>
+            </div>
+            <b><svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></b>
+        </a>
+        <a class="feature-card mint" data-search-item="convert image document archive audio video extensions formats pdf docx doc" href="{% url 'convert' %}">
+            <span class="icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-convert"></use></svg></span>
+            <h2>Convert</h2>
+            <p>Transform PDFs, Word DOCX, spreadsheets, images, audio and videos seamlessly.</p>
+        </a>
+        <a class="feature-card blue" data-search-item="merge pdf images combine docx" href="{% url 'merge' %}">
+            <span class="icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-merge"></use></svg></span>
+            <h2>Merge</h2>
+            <p>Combine multiple PDFs, images, and documents into one clean, unified PDF.</p>
+        </a>
+    </section>
+
+    <section class="quick" data-search-group>
+        <div class="section-title">
+            <h2>Quick start</h2>
+            <span>Popular presets</span>
+        </div>
+        <div class="chip-row">
+            <a data-search-item="pdf docx convert" href="{% url 'convert' %}">PDF to DOCX</a>
+            <a data-search-item="under 1 mb compress" href="{% url 'compress' %}">Under 1 MB</a>
+            <a data-search-item="whatsapp compress" href="{% url 'compress' %}">For WhatsApp</a>
+            <a data-search-item="email compress" href="{% url 'compress' %}">For email</a>
+            <a data-search-item="png jpg convert" href="{% url 'convert' %}">PNG to JPG</a>
+            <a data-search-item="merge pdfs merge" href="{% url 'merge' %}">Merge PDFs</a>
+        </div>
+    </section>
+
+    <section class="lower-grid">
+        <article class="stat-card">
+            <p class="eyebrow">STORAGE SAVED</p>
+            <strong>{{ saved|filesizeformat }}</strong>
+            <span>from your recent files</span>
+        </article>
+        <article class="suggestion">
+            <span><svg class="ui-icon" aria-hidden="true"><use href="#icon-shield"></use></svg></span>
+            <div>
+                <h2>Smart suggestion</h2>
+                <p>Leave target format as 'Same as uploaded' when you only want to compress file size.</p>
+            </div>
+            <a href="{% url 'compress' %}">Optimize <svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></a>
+        </article>
+    </section>
+
+    {% if jobs %}
+        <section class="recent" data-search-group>
+            <div class="section-title">
+                <h2>Recent files</h2>
+                <a href="{% url 'files' %}">View all</a>
+            </div>
+            {% for job in jobs %}
+                <a class="file-row" data-search-item="{{ job.result_name }} {{ job.operation }} file" href="{% url 'result' job.token %}">
+                    <span class="file-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-file"></use></svg></span>
+                    <div>
+                        <b>{{ job.result_name }}</b>
+                        <small>{{ job.operation|title }} - {{ job.created_at|date:'M j, g:i A' }}</small>
+                    </div>
+                    <strong>{% if job.original_size > job.result_size %}{{ job.original_size|filesizeformat }} to {{ job.result_size|filesizeformat }}{% endif %}</strong>
+                    <i><svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></i>
+                </a>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    <p class="search-empty" data-search-empty hidden>No tools or files match your search query.</p>
+
+    <!-- Clear Call To Action (CTA) Banner -->
+    <div class="cta-banner">
+        <div class="cta-content">
+            <span class="cta-pill"><svg class="ui-icon" aria-hidden="true"><use href="#icon-shield"></use></svg> Free &amp; Private Forever</span>
+            <h2>Process your files in seconds</h2>
+            <p>No registration, no daily limits, up to 500 MB per file. Fast native conversion and compression.</p>
+            <div class="cta-actions">
+                <a class="cta-primary-btn" href="{% url 'convert' %}">
+                    <span>Convert a file</span>
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+                </a>
+                <a class="cta-secondary-btn" href="{% url 'compress' %}">
+                    <span>Compress file</span>
+                </a>
+                <a class="cta-secondary-btn" href="{% url 'merge' %}">
+                    <span>Merge PDFs</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

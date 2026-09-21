@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+{% block title %}Terms of Service - THUNA | Fair, Transparent Use{% endblock %}
+{% block meta_description %}Review THUNA's Terms of Service. Clear terms for free, secure online file conversion, compression, and merging up to 500 MB without accounts or hidden catches.{% endblock %}
+
+{% block content %}
+<section class="tool-page legal-page">
+    <a class="back" href="{% url 'home' %}"><svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg>Back home</a>
+    <header class="legal-header">
+        <p class="eyebrow">TERMS & CONDITIONS</p>
+        <h1>Terms of Service<br><span>Clear, honest guidelines.</span></h1>
+        <p class="legal-effective">Effective Date: January 1, 2026 &bull; Last Updated: September 20, 2026</p>
+    </header>
+
+    <div class="legal-content">
+        <div class="legal-highlight-card">
+            <div class="highlight-icon">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-info"></use></svg>
+            </div>
+            <div>
+                <h3>Summary in Plain English</h3>
+                <p>You retain 100% ownership and copyright of your files. You are responsible for having the legal right to upload and transform them. THUNA is free to use for personal and commercial purposes up to 500 MB per file, provided without warranty.</p>
+            </div>
+        </div>
+
+        <article class="legal-section">
+            <h2>1. Acceptance of Terms</h2>
+            <p>By accessing or using the THUNA website, services, or tools, you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
+        </article>
+
+        <article class="legal-section">
+            <h2>2. Description of Service</h2>
+            <p>THUNA provides browser-based, high-performance file utility services including format conversion, file compression, document merging, archive creation, and extraction. Services are offered free of charge and require no user registration or login.</p>
+        </article>
+
+        <article class="legal-section">
+            <h2>3. Acceptable Use and File Limits</h2>
+            <p>To ensure high availability and safety for all users, you agree to the following rules:</p>
+            <ul>
+                <li><strong>Maximum File Size:</strong> Uploaded files must not exceed 500 MB per file. Any uploads exceeding this threshold will be automatically rejected.</li>
+                <li><strong>Prohibited Content:</strong> You must not upload files containing malicious software, viruses, trojans, ransomware, spyware, or any unauthorized copyrighted materials.</li>
+                <li><strong>No Abuse or Denial of Service:</strong> Automated scraping, flooding, botting, or attempting to compromise our server infrastructure is strictly prohibited.</li>
+            </ul>
+        </article>
+
+        <article class="legal-section">
+            <h2>4. Intellectual Property and Content Ownership</h2>
+            <p><strong>Your content remains yours:</strong></p>
+            <ul>
+                <li>THUNA claims no ownership, copyright, or licensing rights over any file or media you upload or process through our platform.</li>
+                <li>You warrant that you possess all requisite rights, licenses, or permissions to upload and modify the files you submit.</li>
+                <li>We do not display, publicly host, or distribute your files to any third parties.</li>
+            </ul>
+        </article>
+
+        <article class="legal-section">
+            <h2>5. Service Availability and File Lifecycle</h2>
+            <p>THUNA processes files on an ephemeral basis. While we strive for 99.9% uptime and reliable conversions, you acknowledge that:</p>
+            <ul>
+                <li>THUNA is not a permanent cloud storage or file backup service. Converted files expire and are permanently deleted after 1 hour.</li>
+                <li>You are responsible for saving and verifying your converted documents immediately after processing.</li>
+            </ul>
+        </article>
+
+        <article class="legal-section">
+            <h2>6. Disclaimer of Warranties</h2>
+            <p>THUNA is provided on an "AS IS" and "AS AVAILABLE" basis without warranties of any kind, whether express or implied. We do not guarantee that file conversions will be error-free, uninterrupted, or that every font, layout, or proprietary macro will translate identically across different file formats.</p>
+        </article>
+
+        <article class="legal-section">
+            <h2>7. Limitation of Liability</h2>
+            <p>To the fullest extent permitted by law, THUNA, its developers, and operators shall not be liable for any indirect, incidental, consequential, special, or punitive damages resulting from your use or inability to use our file processing services.</p>
+        </article>
+
+        <article class="legal-section">
+            <h2>8. Modifications to Terms</h2>
+            <p>We reserve the right to revise or update these Terms of Service at any time. Continued use of the platform after changes have been posted constitutes acceptance of the modified terms.</p>
+        </article>
+
+        <article class="legal-section">
+            <h2>9. Contact and Inquiries</h2>
+            <p>For questions or legal inquiries regarding these Terms of Service, please reach out to us at <a href="mailto:thuna@gmail.com">thuna@gmail.com</a>.</p>
+        </article>
+
+    </div>
+
+    <!-- Prominent Clear CTA Section -->
+    <div class="cta-banner">
+        <div class="cta-content">
+            <span class="cta-pill"><svg class="ui-icon" aria-hidden="true"><use href="#icon-check"></use></svg> Safe, Fast & Unlimited</span>
+            <h2>Ready to convert your files with peace of mind?</h2>
+            <p>No registration, no hidden fees, no data harvesting. Just fast file processing.</p>
+            <div class="cta-actions">
+                <a class="cta-primary-btn" href="{% url 'convert' %}">
+                    <span>Start converting now</span>
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+                </a>
+                <a class="cta-secondary-btn" href="{% url 'compress' %}">
+                    <span>Compress a file</span>
+                </a>
+                <a class="cta-secondary-btn" href="{% url 'pdf_tools' %}">
+                    <span>Explore PDF tools</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

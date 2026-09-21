@@ -1,0 +1,69 @@
+{% extends 'base.html' %}
+{% block title %}{% if job.status == 'success' or job.status == 'completed' %}Download {{ job.result_name }} - File Ready | THUNA{% else %}Processing Status - THUNA{% endif %}{% endblock %}
+{% block meta_description %}Download your converted, compressed, or merged file securely. Fast, direct download with automated 1-hour deletion.{% endblock %}
+
+{% block content %}
+<section class="tool-page result">
+    <a class="back" href="{% url 'home' %}"><svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-left"></use></svg>Back home</a>
+    {% if job.status == 'success' or job.status == 'completed' %}
+        <div class="success-orb" aria-hidden="true"><svg class="ui-icon"><use href="#icon-check"></use></svg></div>
+        <p class="eyebrow">PROCESSING COMPLETE &bull; READY TO DOWNLOAD</p>
+        <h1>Your file is<br><span>ready to go.</span></h1>
+        <article class="result-card">
+            <span class="file-icon big"><svg class="ui-icon" aria-hidden="true"><use href="#icon-file"></use></svg></span>
+            <div>
+                <b>{{ job.result_name }}</b>
+                <p>{{ job.result_size|filesizeformat }} &bull; {{ job.operation|title }} completed{% if job.input_format and job.output_format %} ({{ job.input_format|upper }} &rarr; {{ job.output_format|upper }}){% endif %}</p>
+            </div>
+        </article>
+        <div class="result-stats">
+            <div>
+                <span>Original size</span>
+                <b>{{ job.original_size|filesizeformat }}</b>
+            </div>
+            <div>
+                <span>Optimized size</span>
+                <b>{{ job.result_size|filesizeformat }}</b>
+            </div>
+            <div>
+                <span>Storage saved</span>
+                <b>{{ job.saved_size|filesizeformat }}</b>
+            </div>
+        </div>
+        <a class="primary download" href="{% url 'download' job.token %}">
+            <span>Download your file</span>
+            <svg class="ui-icon" aria-hidden="true"><use href="#icon-download"></use></svg>
+        </a>
+
+        <!-- Clear CTA to Process Another File -->
+        <div class="cta-banner" style="margin-top: 36px; width: 100%;">
+            <div class="cta-content">
+                <span class="cta-pill"><svg class="ui-icon" aria-hidden="true"><use href="#icon-check"></use></svg> Process Next File</span>
+                <h2>Keep the momentum going</h2>
+                <p>Convert another document, compress a video, or merge PDF pages in seconds.</p>
+                <div class="cta-actions">
+                    <a class="cta-primary-btn" href="{% url 'convert' %}">
+                        <span>Convert another file</span>
+                        <svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+                    </a>
+                    <a class="cta-secondary-btn" href="{% url 'compress' %}">
+                        <span>Compress file</span>
+                    </a>
+                    <a class="cta-secondary-btn" href="{% url 'merge' %}">
+                        <span>Merge files</span>
+                    </a>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="error-orb" aria-hidden="true"><svg class="ui-icon"><use href="#icon-alert"></use></svg></div>
+        <p class="eyebrow">PROCESSING HALTED</p>
+        <h1>We could not complete<br><span>this conversion.</span></h1>
+        <p class="failure">{% if job.error_code %}<strong>{{ job.error_code }}:</strong> {% endif %}{{ job.error_message }}</p>
+        <a class="primary" href="{% url 'convert' %}">
+            <span>Try another file</span>
+            <svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+        </a>
+    {% endif %}
+</section>
+{% endblock %}

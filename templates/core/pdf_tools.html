@@ -1,0 +1,81 @@
+{% extends 'base.html' %}
+{% block title %}PDF Suite - Convert, Merge & Compress PDFs Online Free | THUNA{% endblock %}
+{% block meta_description %}All-in-one PDF utility: compress large PDFs, merge multiple documents into one, and convert PDF to DOCX or images up to 500 MB. Free, fast, and secure.{% endblock %}
+
+{% block content %}
+<section class="dashboard pdf-tools-page">
+    <header class="topbar">
+        <div>
+            <p class="eyebrow">PDF SUITE &bull; UP TO 500 MB</p>
+            <h1>Work with PDFs<br><span>without extra steps.</span></h1>
+        </div>
+        <a class="new-button" href="{% url 'merge' %}">
+            <svg class="ui-icon" aria-hidden="true"><use href="#icon-merge"></use></svg>
+            <span>Merge PDFs</span>
+        </a>
+    </header>
+
+    <section class="hero-grid pdf-tool-grid">
+        <a class="feature-card large peach" href="{% url 'compress' %}">
+            <span class="icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-compress"></use></svg></span>
+            <div>
+                <p class="eyebrow">PDF COMPRESSION</p>
+                <h2>Compress<br>PDF files</h2>
+                <p>Upload a PDF and reduce its size while keeping high visual fidelity and readability.</p>
+            </div>
+            <b><svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></b>
+        </a>
+        <a class="feature-card mint" href="{% url 'merge' %}">
+            <span class="icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-merge"></use></svg></span>
+            <h2>Merge PDFs</h2>
+            <p>Combine multiple PDFs, Word docs, and images into one clean document.</p>
+        </a>
+        <a class="feature-card blue" href="{% url 'convert' %}">
+            <span class="icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-convert"></use></svg></span>
+            <h2>PDF to DOCX</h2>
+            <p>Transform PDF into editable Microsoft Word documents preserving formatting and tables.</p>
+        </a>
+    </section>
+
+    {% if jobs %}
+        <section class="recent">
+            <div class="section-title">
+                <h2>Recent PDFs</h2>
+                <a href="{% url 'files' %}">View all</a>
+            </div>
+            {% for job in jobs %}
+                <a class="file-row" href="{% url 'result' job.token %}">
+                    <span class="file-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-file"></use></svg></span>
+                    <div>
+                        <b>{{ job.result_name }}</b>
+                        <small>{{ job.operation|title }} - {{ job.created_at|date:'M j, g:i A' }}</small>
+                    </div>
+                    <strong>{{ job.result_size|filesizeformat }}</strong>
+                    <i><svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></i>
+                </a>
+            {% endfor %}
+        </section>
+    {% endif %}
+
+    <!-- Clear Call To Action (CTA) Banner -->
+    <div class="cta-banner">
+        <div class="cta-content">
+            <span class="cta-pill"><svg class="ui-icon" aria-hidden="true"><use href="#icon-shield"></use></svg> High-Performance PDF Tools</span>
+            <h2>Get more done with your PDFs</h2>
+            <p>Combine, compress, or convert PDF documents up to 500 MB in seconds with automated 1-hour cleanup.</p>
+            <div class="cta-actions">
+                <a class="cta-primary-btn" href="{% url 'merge' %}">
+                    <span>Merge PDFs</span>
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+                </a>
+                <a class="cta-secondary-btn" href="{% url 'compress' %}">
+                    <span>Compress PDF</span>
+                </a>
+                <a class="cta-secondary-btn" href="{% url 'convert' %}">
+                    <span>PDF to DOCX</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

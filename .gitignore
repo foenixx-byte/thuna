@@ -1,0 +1,64 @@
+# Environment variables and secrets
+.env
+.env.*
+*.env
+*.local
+!.env.example
+*.key
+*.pem
+*.crt
+*.pfx
+*.p12
+id_rsa*
+credentials.json
+service_account.json
+client_secrets.json
+
+# Databases
+*.sqlite3
+*.sqlite
+*.db
+db.sqlite3-journal
+
+# Media and user uploads
+media/*
+!media/.gitkeep
+
+# Python virtual environment
+.venv/
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Logs and temporary files
+*.log
+*.pot
+*.pyc
+scratch/
+tmp/
+temp/
+
+# OS generated files
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and Editor files
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.gemini/
+.agents/

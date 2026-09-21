@@ -1,0 +1,71 @@
+{% extends 'base.html' %}
+{% block title %}404 - Page Not Found | THUNA{% endblock %}
+{% block meta_description %}Oops! The page or file you are looking for does not exist or has expired. Return home or use THUNA's free file conversion and compression tools.{% endblock %}
+
+{% block content %}
+<section class="tool-page not-found-page">
+    <div class="not-found-container">
+        <div class="not-found-visual" aria-hidden="true">
+            <div class="orb-404">
+                <span class="num-404">404</span>
+                <div class="ring ring-a"></div>
+                <div class="ring ring-b"></div>
+            </div>
+        </div>
+
+        <header class="not-found-header">
+            <p class="eyebrow">ERROR 404</p>
+            <h1>Lost in the clouds?<br><span>This page doesn't exist.</span></h1>
+            <p>The link may be broken, or the temporary processing session may have expired and been cleaned up for your security.</p>
+        </header>
+
+        <!-- Clear CTA Actions -->
+        <div class="not-found-actions">
+            <a class="cta-primary-btn" href="{% url 'home' %}">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-home"></use></svg>
+                <span>Return to Home</span>
+            </a>
+            <a class="cta-secondary-btn" href="{% url 'convert' %}">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-convert"></use></svg>
+                <span>Convert a file</span>
+            </a>
+            <a class="cta-secondary-btn" href="{% url 'compress' %}">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-compress"></use></svg>
+                <span>Compress a file</span>
+            </a>
+            <a class="cta-secondary-btn" href="{% url 'merge' %}">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-merge"></use></svg>
+                <span>Merge files</span>
+            </a>
+        </div>
+
+        <!-- Helpful Quick Links Grid -->
+        <div class="not-found-links">
+            <h3>Popular Tools & Pages</h3>
+            <div class="quick-links-row">
+                <a href="{% url 'pdf_tools' %}" class="quick-link-card">
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-file"></use></svg>
+                    <div>
+                        <strong>PDF Suite</strong>
+                        <small>Convert, merge & compress PDFs</small>
+                    </div>
+                </a>
+                <a href="{% url 'about' %}" class="quick-link-card">
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-info"></use></svg>
+                    <div>
+                        <strong>About THUNA</strong>
+                        <small>Engine specs & architecture</small>
+                    </div>
+                </a>
+                <a href="{% url 'privacy' %}" class="quick-link-card">
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-lock"></use></svg>
+                    <div>
+                        <strong>Privacy Policy</strong>
+                        <small>Anonymous file processing</small>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

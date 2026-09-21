@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+{% block title %}About THUNA - Free Online File Converter, Compressor & Privacy Architecture{% endblock %}
+{% block meta_description %}Learn about THUNA's mission, architecture, and developer. Free, anonymous, and fast file utility for converting, compressing, and merging documents up to 500 MB.{% endblock %}
+{% block content %}
+<section class="about-page">
+    <header class="about-hero">
+        <div>
+            <p class="about-pill"><svg class="ui-icon"><use href="#icon-info"></use></svg>About Thuna</p>
+            <h1>Smarter file tools<br>for everyone</h1>
+            <p>Thuna is a modern media compressor and file utility designed to help you reduce, convert, merge, and manage files with a clean workflow.</p>
+            <p>Built with a privacy-first approach, Thuna keeps file work simple: upload what you need, choose the result, and download the optimized file without creating an account.</p>
+            <div class="about-actions">
+                <a class="primary" href="{% url 'compress' %}"><svg class="ui-icon"><use href="#icon-upload"></use></svg>Start compressing</a>
+                <a class="ghost-button" href="#connect">Connect with us</a>
+            </div>
+        </div>
+        <article class="about-card why-card">
+            <h2>Why Thuna?</h2>
+            <ul>
+                <li><svg class="ui-icon"><use href="#icon-compress"></use></svg><span>Compress files quickly with a clean, simple workflow.</span></li>
+                <li><svg class="ui-icon"><use href="#icon-convert"></use></svg><span>Convert common image formats without extra steps.</span></li>
+                <li><svg class="ui-icon"><use href="#icon-merge"></use></svg><span>Merge PDFs and images into one shareable PDF.</span></li>
+                <li><svg class="ui-icon"><use href="#icon-shield"></use></svg><span>Session-based results help keep your file access private.</span></li>
+                <li><svg class="ui-icon"><use href="#icon-search"></use></svg><span>Searchable format selection makes output choices easier.</span></li>
+            </ul>
+        </article>
+    </header>
+    <section class="about-grid">
+        <article class="about-card">
+            <h2>Developed By</h2>
+            <h3>Sreehari</h3>
+            <p>I am a passionate software developer with a keen interest in building intuitive and efficient applications. With a focus on user experience and performance, I strive to create tools that simplify everyday tasks and enhance productivity.</p>
+            <p>Thuna was created with a focus on simplicity, performance, and privacy to make file management easier for everyone.</p>
+        </article>
+        <article class="about-card">
+            <h2>Our Mission</h2>
+            <p>To provide a fast, secure, and user-friendly file compression and conversion experience that helps people handle everyday files with confidence.</p>
+            <strong>Make your files lighter, cleaner, and easier to share with Thuna.</strong>
+        </article>
+    </section>
+    <section class="faq-section" id="faq">
+        <div class="section-title">
+            <div>
+                <p class="eyebrow">FAQ</p>
+                <h2>Questions, answered.</h2>
+            </div>
+            <span>Everything you need to know</span>
+        </div>
+        <div class="faq-list">
+            <details class="faq-item" open>
+                <summary>What can I do with Thuna?</summary>
+                <p>You can compress files, convert common formats, merge PDFs and images, and manage your recent results from one simple workspace.</p>
+            </details>
+            <details class="faq-item">
+                <summary>Do I need to create an account?</summary>
+                <p>No. Thuna works without an account, so you can upload a file and process it immediately.</p>
+            </details>
+            <details class="faq-item">
+                <summary>Which file formats are supported?</summary>
+                <p>Thuna supports common image, document, archive, audio, and video formats. The available output formats are shown in the format picker for each tool.</p>
+            </details>
+            <details class="faq-item">
+                <summary>Are my files kept private?</summary>
+                <p>Processed files are session-based and temporary. They are not intended to be permanent storage, so download anything you want to keep.</p>
+            </details>
+            <details class="faq-item">
+                <summary>Can I use Thuna on my phone?</summary>
+                <p>Yes. The interface is responsive and adapts to smaller screens, so the tools work on mobile and desktop browsers.</p>
+            </details>
+        </div>
+    </section>
+    <section id="connect" class="px-4 sm:px-6 md:px-margin-desktop max-w-5xl mx-auto py-12 sm:py-16 md:py-20">
+        <div class="glass-card p-6 sm:p-8 md:p-12 rounded-3xl text-center">
+            <h2 class="text-3xl font-semibold mb-4">Connect</h2>
+            <p class="text-on-surface/90 mb-8">Follow the project and get in touch through these channels.</p>
+            <div class="flex flex-wrap justify-center gap-3 sm:gap-4 connect-links-wrap">
+                <a href="#" class="connect-btn flex items-center gap-2 border border-white/15 rounded-full px-5 py-3 hover:bg-white/5 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFD9A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-user-round-arrow-left-icon lucide-user-round-arrow-left"><path d="m19 16-3 3"/><path d="M2 21a8 8 0 0 1 12.664-6.5"/><path d="M22 19h-6l3 3"/><circle cx="10" cy="8" r="5"/></svg>
+                    <span>Portfolio</span>
+                </a>
+                <a href="https://www.linkedin.com/in/sreehari-p-33b1a1385" target="_blank" rel="noopener noreferrer" class="connect-btn flex items-center gap-2 border border-white/15 rounded-full px-5 py-3 hover:bg-white/5 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFD9A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-linkedin-icon lucide-linkedin"><path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg>
+                    <span>LinkedIn</span>
+                </a>
+                <a href="https://github.com/foenixx-byte" target="_blank" rel="noopener noreferrer" class="connect-btn flex items-center gap-2 border border-white/15 rounded-full px-5 py-3 hover:bg-white/5 transition-all">
+                    <svg width="24px" height="24px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                        <title>github [#142]</title>
+                        <desc>Created with Sketch.</desc>
+                        <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                            <g id="Dribbble-Light-Preview" transform="translate(-140.000000, -7559.000000)" fill="#FFD9A0" fill-rule="nonzero">
+                                <g id="icons" transform="translate(56.000000, 160.000000)">
+                                    <path d="M94,7399 C99.523,7399 104,7403.59 104,7409.253 C104,7413.782 101.138,7417.624 97.167,7418.981 C96.66,7419.082 96.48,7418.762 96.48,7418.489 C96.48,7418.151 96.492,7417.047 96.492,7415.675 C96.492,7414.719 96.172,7414.095 95.813,7413.777 C98.04,7413.523 100.38,7412.656 100.38,7408.718 C100.38,7407.598 99.992,7406.684 99.35,7405.966 C99.454,7405.707 99.797,7404.664 99.252,7403.252 C99.252,7403.252 98.414,7402.977 96.505,7404.303 C95.706,7404.076 94.85,7403.962 94,7403.958 C93.15,7403.962 92.295,7404.076 91.497,7404.303 C89.586,7402.977 88.746,7403.252 88.746,7403.252 C88.203,7404.664 88.546,7405.707 88.649,7405.966 C88.01,7406.684 87.619,7407.598 87.619,7408.718 C87.619,7412.646 89.954,7413.526 92.175,7413.785 C91.889,7414.041 91.63,7414.493 91.54,7415.156 C90.97,7415.418 89.522,7415.871 88.63,7414.304 C88.63,7414.304 88.101,7413.319 87.097,7413.247 C87.097,7413.247 86.122,7413.234 87.029,7413.87 C87.029,7413.87 87.684,7414.185 88.139,7415.37 C88.139,7415.37 88.726,7417.2 91.508,7416.58 C91.513,7417.437 91.522,7418.245 91.522,7418.489 C91.522,7418.76 91.338,7419.077 90.839,7418.982 C86.865,7417.627 84,7413.783 84,7409.253 C84,7403.59 88.478,7399 94,7399" id="github-[#142]"></path>
+                                </g>
+                            </g>
+                        </g>
+                    </svg>
+                    <span>GitHub</span>
+                </a>
+                <a href="mailto:expentrax26@gmail.com" class="connect-btn flex items-center gap-2 border border-white/15 rounded-full px-5 py-3 hover:bg-white/5 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FFD9A0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="lucide lucide-mail-icon lucide-mail"><path d="m22 7-8.991 5.727a2 2 0 0 1-2.009 0L2 7"/><rect x="2" y="4" width="20" height="16" rx="2"/></svg>
+                    <span>Email</span>
+                </a>
+            </div>
+        </div>
+    </section>
+
+
+
+    <!-- Clear Call To Action (CTA) Banner -->
+    <div class="cta-banner">
+        <div class="cta-content">
+            <span class="cta-pill"><svg class="ui-icon" aria-hidden="true"><use href="#icon-shield"></use></svg> Fast &amp; Anonymous</span>
+            <h2>Experience THUNA for yourself</h2>
+            <p>Convert documents, compress media, and merge PDFs with maximum privacy and speed.</p>
+            <div class="cta-actions">
+                <a class="cta-primary-btn" href="{% url 'convert' %}">
+                    <span>Convert a file</span>
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+                </a>
+                <a class="cta-secondary-btn" href="{% url 'compress' %}">
+                    <span>Compress file</span>
+                </a>
+                <a class="cta-secondary-btn" href="{% url 'merge' %}">
+                    <span>Merge PDFs</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+

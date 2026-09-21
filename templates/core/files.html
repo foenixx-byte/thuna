@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+{% block title %}My Files - Current Browser Session | THUNA{% endblock %}
+{% block meta_description %}View and download your converted, compressed, or merged files from this browser session. Files are kept private and cleaned up automatically.{% endblock %}
+
+{% block content %}
+<section class="dashboard">
+    <header class="topbar">
+        <div>
+            <p class="eyebrow">ANONYMOUS BROWSER SESSION</p>
+            <h1>My Files</h1>
+        </div>
+        <a class="new-button" href="{% url 'compress' %}">
+            <svg class="ui-icon" aria-hidden="true"><use href="#icon-upload"></use></svg>
+            <span>New</span>
+        </a>
+    </header>
+
+    <div class="file-list">
+        {% for job in jobs %}
+            <a class="file-row" href="{% url 'result' job.token %}">
+                <span class="file-icon"><svg class="ui-icon" aria-hidden="true"><use href="#icon-file"></use></svg></span>
+                <div>
+                    <b>{{ job.original_name }}</b>
+                    <small>{{ job.operation|title }} - {{ job.status|title }}</small>
+                </div>
+                <strong>{{ job.original_size|filesizeformat }}</strong>
+                <i><svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg></i>
+            </a>
+        {% empty %}
+            <div class="empty">
+                <span><svg class="ui-icon" aria-hidden="true"><use href="#icon-file"></use></svg></span>
+                <h2>No files in this session</h2>
+                <p>Upload a file to convert, compress, or merge. Converted files will appear here until your session ends.</p>
+                <a class="primary" href="{% url 'convert' %}">
+                    <span>Start with a file</span>
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+
+    <!-- Clear Call To Action (CTA) Banner -->
+    <div class="cta-banner">
+        <div class="cta-content">
+            <span class="cta-pill"><svg class="ui-icon" aria-hidden="true"><use href="#icon-lock"></use></svg> Safe &amp; Ephemeral</span>
+            <h2>Need to process another file?</h2>
+            <p>Convert documents, optimize videos and images, or merge PDFs up to 500 MB.</p>
+            <div class="cta-actions">
+                <a class="cta-primary-btn" href="{% url 'convert' %}">
+                    <span>Convert a file</span>
+                    <svg class="ui-icon" aria-hidden="true"><use href="#icon-arrow-right"></use></svg>
+                </a>
+                <a class="cta-secondary-btn" href="{% url 'compress' %}">
+                    <span>Compress file</span>
+                </a>
+                <a class="cta-secondary-btn" href="{% url 'merge' %}">
+                    <span>Merge PDFs</span>
+                </a>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}

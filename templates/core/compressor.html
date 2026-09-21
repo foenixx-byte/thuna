@@ -1,0 +1,196 @@
+{% extends 'base.html' %}
+{% block title %}{% if mode == 'convert' %}Convert Files Online (PDF, DOCX, DOC, Images, Audio, Video) - THUNA{% elif mode == 'merge' %}Merge Files & PDFs Online into One Document - THUNA{% elif mode == 'zip_create' %}Create ZIP Archive Online Free - THUNA{% elif mode == 'zip_extract' %}Extract ZIP Archive Online Free - THUNA{% else %}Compress Files Online (PDF, Images, Video) without Losing Quality - THUNA{% endif %}{% endblock %}
+{% block meta_description %}{% if mode == 'convert' %}Convert documents, PDFs, images, spreadsheets, audio and video online up to 500 MB. Fast native engines with layout and content preservation.{% elif mode == 'merge' %}Combine multiple PDF pages, Word documents, images, and text files into one clean PDF document online for free.{% elif mode == 'zip_create' %}Package multiple files into a secure compressed ZIP archive online up to 500 MB.{% elif mode == 'zip_extract' %}Safely inspect and extract files from ZIP archives online with path protection.{% else %}Compress PDFs, images, and media files online. Customize file size and visual fidelity with an intuitive quality slider up to 500 MB.{% endif %}{% endblock %}
+{% block content %}
+<section class="tool-page">
+    <a class="back" href="{% url 'home' %}"><svg class="ui-icon"><use href="#icon-arrow-left"></use></svg>Back home</a>
+    <header>
+        <p class="eyebrow">THUNA {{ mode|upper }}</p>
+        <h1>
+            {% if mode == 'convert' %}
+                Convert your files<br><span>without the fuss.</span>
+            {% elif mode == 'merge' %}
+                Merge your files<br><span>into one PDF.</span>
+            {% else %}
+                Compress your files<br><span>without compromise.</span>
+            {% endif %}
+        </h1>
+        <p>Select files from your device. THUNA validates file signatures, engine availability and output files before reporting success.</p>
+    </header>
+    <form method="post" enctype="multipart/form-data" class="tool-form" data-processing-form>
+        {% csrf_token %}
+        <input type="hidden" name="operation" value="{{ mode }}">
+        <label class="drop-zone" data-upload-zone>
+            <input type="file" name="file" aria-required="true" {% if mode == 'merge' %}multiple{% endif %} data-file-input>
+            <span class="upload-icon"><svg class="ui-icon"><use href="#icon-upload"></use></svg></span>
+            <b>{% if mode == 'merge' %}Drop files here{% else %}Drop your file here{% endif %}</b>
+            <small>{% if mode == 'merge' %}choose at least 2 files{% else %}or click to browse{% endif %} - up to 500 MB each</small>
+            <output data-file-name aria-live="polite"></output>
+        </label>
+        {% if form.file.errors %}<p class="error">{{ form.file.errors.0 }}</p>{% endif %}
+        <div class="settings-grid">
+            <div class="format-field-wrapper">
+                <span class="field-label">Target format</span>
+                <div class="format-picker" data-format-picker>
+                    <button type="button" class="format-trigger" data-format-trigger aria-haspopup="listbox" aria-expanded="false">
+                        <span class="format-trigger-icon"><svg class="ui-icon"><use href="#icon-convert"></use></svg></span>
+                        <span class="format-trigger-text" data-format-current>Same as uploaded</span>
+                        <svg class="ui-icon dropdown-icon"><use href="#icon-chevron-down"></use></svg>
+                    </button>
+                    <div class="format-dropdown" data-format-dropdown hidden>
+                        <div class="format-search-box">
+                            <svg class="ui-icon"><use href="#icon-search"></use></svg>
+                            <input type="search" placeholder="Search target format (PDF, DOCX...)" autocomplete="off" data-format-search>
+                        </div>
+                        <div class="format-options" data-format-options role="listbox"></div>
+                    </div>
+                    {{ form.output_format }}
+                </div>
+            </div>
+            <label class="quality-field">Quality <span data-quality>{{ form.quality.value|default:80 }}%</span>
+                {{ form.quality }}
+                <div class="quality-scale" aria-hidden="true"><span>100 KB</span><span>500 KB</span><span>1 MB</span><span>5 MB</span><span>Best</span></div>
+            </label>
+        </div>
+        <div class="privacy-note"><span><b>Secure file processing</b><br>Your upload is linked only to this browser session.</span></div>
+        <button class="primary process-button" type="submit" data-submit-button data-loading-text="{% if mode == 'convert' %}Converting...{% elif mode == 'merge' %}Merging...{% else %}Compressing...{% endif %}">
+            <span class="button-label">{% if mode == 'convert' %}Convert file{% elif mode == 'merge' %}Merge files{% else %}Compress file{% endif %}</span>
+            <span class="button-icon"><svg class="ui-icon"><use href="#icon-arrow-right"></use></svg></span>
+            <span class="button-spinner" aria-hidden="true"></span>
+        </button>
+    </form>
+    <div class="health-card"><span><svg class="ui-icon"><use href="#icon-shield"></use></svg></span><div><h2>File Health</h2><p>THUNA checks file signatures, readability, type and size before processing.</p></div></div>
+
+    <!-- Processing Animation Modal Overlay -->
+    <div class="processing-modal-backdrop" id="processingModal" aria-hidden="true" role="dialog" aria-modal="true">
+        <div class="processing-modal-card">
+            <!-- Header -->
+            <div class="proc-header">
+                <span class="proc-tag" id="procModeTag">UPLOADING</span>
+                <h2 class="proc-title" id="procTitle">Uploading your files...</h2>
+                <p class="proc-subtitle" id="procSubtitle">Securing connection and streaming bytes to the engine</p>
+            </div>
+
+            <!-- Visual Animation Stage Area -->
+            <div class="proc-stage" id="procStage">
+                <!-- 1. Uploading Animation Scene -->
+                <div class="scene scene-upload" id="sceneUpload">
+                    <div class="upload-radar">
+                        <div class="radar-pulse"></div>
+                        <div class="radar-pulse delay-1"></div>
+                        <div class="radar-pulse delay-2"></div>
+                        <div class="upload-center-icon">
+                            <svg class="ui-icon"><use href="#icon-upload"></use></svg>
+                        </div>
+                    </div>
+                    <div class="upload-metrics">
+                        <span class="metric-percent" id="uploadPercent">0%</span>
+                        <span class="metric-bytes" id="uploadBytes">0 KB / 0 KB</span>
+                    </div>
+                </div>
+
+                <!-- 2. Compressing Animation Scene -->
+                <div class="scene scene-compress" id="sceneCompress" hidden>
+                    <div class="compress-visual">
+                        <div class="shrink-box">
+                            <div class="shrink-inner">
+                                <span class="doc-icon"><svg class="ui-icon"><use href="#icon-compress"></use></svg></span>
+                                <span class="shrink-badge" id="compressBadge">FILE</span>
+                            </div>
+                            <div class="compress-ring ring-1"></div>
+                            <div class="compress-ring ring-2"></div>
+                            <div class="compress-ray top"></div>
+                            <div class="compress-ray bottom"></div>
+                            <div class="compress-ray left"></div>
+                            <div class="compress-ray right"></div>
+                        </div>
+                    </div>
+                    <div class="proc-status-pill">
+                        <span class="pulse-dot"></span>
+                        <span>Optimizing internal structure & reducing file size...</span>
+                    </div>
+                </div>
+
+                <!-- 3. Converting Animation Scene -->
+                <div class="scene scene-convert" id="sceneConvert" hidden>
+                    <div class="convert-visual">
+                        <div class="format-node source-node">
+                            <span class="format-node-badge" id="sourceBadge">DOCX</span>
+                        </div>
+                        <div class="convert-conduit">
+                            <div class="conduit-track"></div>
+                            <div class="conduit-particles">
+                                <span class="particle p1"></span>
+                                <span class="particle p2"></span>
+                                <span class="particle p3"></span>
+                            </div>
+                            <div class="conduit-gear">
+                                <svg class="ui-icon spin"><use href="#icon-convert"></use></svg>
+                            </div>
+                        </div>
+                        <div class="format-node target-node">
+                            <span class="format-node-badge active" id="targetBadge">PDF</span>
+                        </div>
+                    </div>
+                    <div class="proc-status-pill">
+                        <span class="pulse-dot"></span>
+                        <span id="convertStatusText">Translating layout, fonts and typography...</span>
+                    </div>
+                </div>
+
+                <!-- 4. Merging Animation Scene -->
+                <div class="scene scene-merge" id="sceneMerge" hidden>
+                    <div class="merge-visual">
+                        <div class="merge-deck">
+                            <div class="deck-card card-1"><span class="card-num">1</span></div>
+                            <div class="deck-card card-2"><span class="card-num">2</span></div>
+                            <div class="deck-card card-3"><span class="card-num">3</span></div>
+                            <div class="deck-card merged-doc">
+                                <svg class="ui-icon"><use href="#icon-file"></use></svg>
+                                <b>PDF</b>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="proc-status-pill">
+                        <span class="pulse-dot"></span>
+                        <span id="mergeStatusText">Binding pages into a unified PDF document...</span>
+                    </div>
+                </div>
+
+                <!-- 5. Error Scene -->
+                <div class="scene scene-error" id="sceneError" hidden>
+                    <div class="error-orb-modal">
+                        <svg class="ui-icon"><use href="#icon-alert"></use></svg>
+                    </div>
+                    <p class="error-modal-msg" id="errorModalMsg">An error occurred during processing.</p>
+                    <button type="button" class="retry-btn" id="retryBtn">
+                        <svg class="ui-icon"><use href="#icon-arrow-left"></use></svg>
+                        <span>Try Again</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Bar & Steps -->
+            <div class="proc-progress-container" id="procProgressContainer">
+                <div class="proc-progress-track">
+                    <div class="proc-progress-bar" id="procProgressBar" style="width: 0%;"></div>
+                </div>
+                <div class="proc-steps">
+                    <div class="proc-step active" id="stepUpload">
+                        <span class="step-dot"></span>
+                        <span class="step-name">Upload</span>
+                    </div>
+                    <div class="proc-step" id="stepProcess">
+                        <span class="step-dot"></span>
+                        <span class="step-name">Process</span>
+                    </div>
+                    <div class="proc-step" id="stepFinish">
+                        <span class="step-dot"></span>
+                        <span class="step-name">Ready</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
