@@ -361,10 +361,22 @@ class ImageConverter:
 
         buffer = BytesIO()
         save_args = {"format": fmt}
-        if fmt in {"JPEG", "WEBP"}:
-            save_args.update({"quality": int(quality), "optimize": True})
-        elif fmt in {"PNG", "TIFF"}:
-            save_args["optimize"] = True
+        q = int(quality or 80)
+        num_pixels = image.width * image.height
+        if fmt == "JPEG":
+            save_args["quality"] = q
+            save_args["progressive"] = True
+            if num_pixels < 1_000_000:
+                save_args["optimize"] = True
+        elif fmt == "WEBP":
+            save_args["quality"] = q
+            save_args["method"] = 4
+        elif fmt == "PNG":
+            save_args["compress_level"] = 6
+            if num_pixels < 500_000:
+                save_args["optimize"] = True
+        elif fmt == "TIFF":
+            save_args["compression"] = "tiff_lzw"
         image.save(buffer, **save_args)
         return ConversionResult(f"{safe_stem(job.original_name)}-thuna.{target}", buffer.getvalue(), target)
 
@@ -405,9 +417,12 @@ class PDFConverter:
         doc = self._open(job)
         buffer = BytesIO()
         try:
+            q = int(quality or 80)
             if hasattr(doc, "rewrite_images"):
-                doc.rewrite_images(dpi_threshold=200, dpi_target=150, quality=int(quality), lossy=True, lossless=True)
-            doc.save(buffer, garbage=4, deflate=True, deflate_images=True, deflate_fonts=True, clean=True)
+                target_dpi = 150 if q >= 75 else (120 if q >= 50 else 96)
+                thresh_dpi = target_dpi + 30
+                doc.rewrite_images(dpi_threshold=thresh_dpi, dpi_target=target_dpi, quality=q, lossy=True, lossless=True)
+            doc.save(buffer, garbage=3, deflate=True, deflate_images=True, deflate_fonts=True, clean=True)
         finally:
             doc.close()
         return ConversionResult(f"{safe_stem(job.original_name)}-thuna.pdf", buffer.getvalue(), "pdf")
@@ -468,22 +483,31 @@ class PDFConverter:
         doc = self._open(job)
         pages = []
         try:
+            # 1.5x scale provides crisp readability without 4x memory bloating
+            matrix = fitz.Matrix(1.5, 1.5)
+            q = int(quality or 80)
             for index, page in enumerate(doc):
-                pix = page.get_pixmap(matrix=fitz.Matrix(2, 2), alpha=False)
-                image = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
-                buffer = BytesIO()
-                save_args = {"format": IMAGE_OUTPUT_FORMATS[target], "optimize": True}
-                if target in {"jpg", "webp"}:
-                    save_args["quality"] = int(quality)
-                image.save(buffer, **save_args)
-                pages.append((f"page-{index + 1}.{target}", buffer.getvalue()))
+                pix = page.get_pixmap(matrix=matrix, alpha=False)
+                if target in {"jpg", "jpeg"}:
+                    page_bytes = pix.tobytes("jpg", jpg_quality=q)
+                elif target == "png":
+                    page_bytes = pix.tobytes("png")
+                else:
+                    image = Image.frombytes("RGB", [pix.width, pix.height], pix.samples)
+                    buffer = BytesIO()
+                    save_args = {"format": IMAGE_OUTPUT_FORMATS[target]}
+                    if target == "webp":
+                        save_args["quality"] = q
+                    image.save(buffer, **save_args)
+                    page_bytes = buffer.getvalue()
+                pages.append((f"page-{index + 1}.{target}", page_bytes))
         finally:
             doc.close()
 
         if len(pages) == 1:
             return ConversionResult(f"{safe_stem(job.original_name)}-thuna.{target}", pages[0][1], target)
         zip_buffer = BytesIO()
-        with ZipFile(zip_buffer, "w", compression=ZIP_DEFLATED, compresslevel=9) as archive:
+        with ZipFile(zip_buffer, "w", compression=ZIP_DEFLATED, compresslevel=6) as archive:
             for name, data in pages:
                 archive.writestr(name, data)
         return ConversionResult(f"{safe_stem(job.original_name)}-thuna-pages.zip", zip_buffer.getvalue(), "zip")
@@ -1136,7 +1160,7 @@ class DocumentConverter:
         in_buf = BytesIO(original_data)
         out_buf = BytesIO()
         compressed_count = 0
-        with ZipFile(in_buf, "r") as zin, ZipFile(out_buf, "w", compression=ZIP_DEFLATED, compresslevel=9) as zout:
+        with ZipFile(in_buf, "r") as zin, ZipFile(out_buf, "w", compression=ZIP_DEFLATED, compresslevel=6) as zout:
             for item in zin.infolist():
                 data = zin.read(item.filename)
                 fname = item.filename.lower()
@@ -1145,15 +1169,15 @@ class DocumentConverter:
                         img = Image.open(BytesIO(data))
                         max_dim = 1600
                         if img.width > max_dim or img.height > max_dim:
-                            img.thumbnail((max_dim, max_dim), Image.Resampling.LANCZOS)
+                            img.thumbnail((max_dim, max_dim), Image.Resampling.BILINEAR)
                         img_buf = BytesIO()
                         fmt = "JPEG" if fname.endswith((".jpg", ".jpeg")) else "PNG"
                         if fmt == "JPEG":
                             if img.mode not in ("RGB", "L"):
                                 img = img.convert("RGB")
-                            img.save(img_buf, format=fmt, quality=int(quality), optimize=True)
+                            img.save(img_buf, format=fmt, quality=int(quality))
                         else:
-                            img.save(img_buf, format=fmt, optimize=True)
+                            img.save(img_buf, format=fmt, compress_level=6)
                         new_data = img_buf.getvalue()
                         if len(new_data) < len(data):
                             data = new_data
@@ -1296,10 +1320,10 @@ class MediaConverter:
         if target in AUDIO_EXTENSIONS and not has_audio:
             raise ConversionError("NO_AUDIO_STREAM", ERROR_MESSAGES["NO_AUDIO_STREAM"])
 
-        command = [ffmpeg, "-y", "-i", str(input_path)]
+        command = [ffmpeg, "-y", "-threads", "0", "-i", str(input_path)]
         if target in VIDEO_EXTENSIONS:
             codec = self.VIDEO_CODECS.get(target, "libx264")
-            command += ["-c:v", codec]
+            command += ["-c:v", codec, "-preset", "veryfast"]
             if has_audio:
                 if target == "webm":
                     command += ["-c:a", "libvorbis"]
@@ -1332,11 +1356,11 @@ class MediaConverter:
         has_audio = any(s.get("codec_type") == "audio" for s in streams)
 
         q = max(10, min(100, int(quality or 80)))
-        command = [ffmpeg, "-y", "-i", str(input_path)]
+        command = [ffmpeg, "-y", "-threads", "0", "-i", str(input_path)]
         if source_format in VIDEO_EXTENSIONS:
             crf = int(18 + ((100 - q) / 100.0) * 18)
             codec = self.VIDEO_CODECS.get(source_format, "libx264")
-            command += ["-c:v", codec, "-crf", str(crf), "-preset", "fast"]
+            command += ["-c:v", codec, "-crf", str(crf), "-preset", "veryfast"]
             if has_audio:
                 audio_bitrate = "128k" if q >= 75 else ("96k" if q >= 45 else "64k")
                 if source_format == "webm":
@@ -1407,7 +1431,7 @@ class ArchiveConverter:
             raise ConversionError("INVALID_FILE", "Choose at least one file to create a ZIP.")
         buffer = BytesIO()
         used = set()
-        with ZipFile(buffer, "w", compression=ZIP_DEFLATED, compresslevel=9) as archive:
+        with ZipFile(buffer, "w", compression=ZIP_DEFLATED, compresslevel=6) as archive:
             for uploaded in uploads:
                 arcname = unique_arcname(safe_archive_name(uploaded.name), used)
                 archive.writestr(arcname, read_upload(uploaded))
@@ -1417,7 +1441,7 @@ class ArchiveConverter:
         original_data = read_upload(job.original)
         self.inspect_zip(original_data)
         buffer = BytesIO()
-        with ZipFile(BytesIO(original_data), "r") as source, ZipFile(buffer, "w", compression=ZIP_DEFLATED, compresslevel=9) as target:
+        with ZipFile(BytesIO(original_data), "r") as source, ZipFile(buffer, "w", compression=ZIP_DEFLATED, compresslevel=6) as target:
             for entry in source.infolist():
                 if entry.is_dir():
                     target.writestr(entry.filename.rstrip("/") + "/", b"")

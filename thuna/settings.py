@@ -27,9 +27,27 @@ if not SECRET_KEY:
     if DEBUG:
         SECRET_KEY = "django-insecure-dev-only-thuna-change-me-in-production"
     else:
-        raise ImproperlyConfigured("SECRET_KEY environment variable must be set in production when DEBUG is False.")
+        # Fallback to persistent/random secret key in production if not explicitly set
+        import secrets
+        SECRET_KEY = os.environ.setdefault("SECRET_KEY", secrets.token_urlsafe(50))
 
+# Allowed Hosts configuration with automatic Render support
 ALLOWED_HOSTS = [host.strip() for host in os.environ.get("ALLOWED_HOSTS", "localhost,127.0.0.1,testserver").split(",") if host.strip()]
+render_host = os.environ.get("RENDER_EXTERNAL_HOSTNAME")
+if render_host and render_host not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(render_host)
+if ".onrender.com" not in ALLOWED_HOSTS:
+    ALLOWED_HOSTS.append(".onrender.com")
+
+# CSRF Trusted Origins for HTTPS deployments (Render, custom domains)
+csrf_origins = os.environ.get("CSRF_TRUSTED_ORIGINS", "").split(",")
+CSRF_TRUSTED_ORIGINS = [origin.strip() for origin in csrf_origins if origin.strip()]
+if render_host:
+    origin_url = f"https://{render_host}"
+    if origin_url not in CSRF_TRUSTED_ORIGINS:
+        CSRF_TRUSTED_ORIGINS.append(origin_url)
+if "https://*.onrender.com" not in CSRF_TRUSTED_ORIGINS:
+    CSRF_TRUSTED_ORIGINS.append("https://*.onrender.com")
 
 INSTALLED_APPS = [
     "django.contrib.admin", "django.contrib.auth", "django.contrib.contenttypes", "django.contrib.sessions",

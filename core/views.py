@@ -13,9 +13,13 @@ logger = logging.getLogger(__name__)
 
 
 def session_key(request):
-    if not request.session.session_key:
-        request.session.create()
-    return request.session.session_key
+    try:
+        if not request.session.session_key:
+            request.session.create()
+        return request.session.session_key or "anonymous"
+    except Exception as exc:
+        logger.warning("Session initialization fallback: %s", exc)
+        return "anonymous"
 
 
 def owned_job(request, token):
@@ -23,8 +27,14 @@ def owned_job(request, token):
 
 
 def home(request):
-    jobs = ProcessingJob.objects.filter(session_key=session_key(request), status__in=["success", "completed"])[:4]
-    saved = sum(max(0, job.original_size - job.result_size) for job in jobs)
+    try:
+        s_key = session_key(request)
+        jobs = list(ProcessingJob.objects.filter(session_key=s_key, status__in=["success", "completed"])[:4])
+        saved = sum(max(0, job.original_size - job.result_size) for job in jobs)
+    except Exception as exc:
+        logger.exception("Failed loading recent jobs on home page: %s", exc)
+        jobs = []
+        saved = 0
     return render(request, "core/home.html", {"jobs": jobs, "saved": saved})
 
 
@@ -136,11 +146,20 @@ def download(request, token):
 
 
 def files(request):
-    return render(request, "core/files.html", {"jobs": ProcessingJob.objects.filter(session_key=session_key(request))})
+    try:
+        jobs = ProcessingJob.objects.filter(session_key=session_key(request))
+    except Exception as exc:
+        logger.exception("Failed loading files: %s", exc)
+        jobs = []
+    return render(request, "core/files.html", {"jobs": jobs})
 
 
 def pdf_tools(request):
-    jobs = ProcessingJob.objects.filter(session_key=session_key(request), status__in=["success", "completed"], result_name__iendswith=".pdf")[:4]
+    try:
+        jobs = ProcessingJob.objects.filter(session_key=session_key(request), status__in=["success", "completed"], result_name__iendswith=".pdf")[:4]
+    except Exception as exc:
+        logger.exception("Failed loading pdf_tools: %s", exc)
+        jobs = []
     return render(request, "core/pdf_tools.html", {"jobs": jobs})
 
 
