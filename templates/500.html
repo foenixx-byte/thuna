@@ -1,0 +1,42 @@
+{% extends 'base.html' %}
+{% block title %}500 - Server Error | THUNA{% endblock %}
+{% block meta_description %}Something went wrong while processing your request. Please try again or return to THUNA home.{% endblock %}
+
+{% block content %}
+<section class="tool-page not-found-page">
+    <div class="not-found-container">
+        <div class="not-found-visual" aria-hidden="true">
+            <div class="orb-404">
+                <span class="num-404">500</span>
+                <div class="ring ring-a"></div>
+                <div class="ring ring-b"></div>
+            </div>
+        </div>
+
+        <header class="not-found-header">
+            <p class="eyebrow">ERROR 500</p>
+            <h1>Unexpected Error<br><span>Something went wrong on our end.</span></h1>
+            <p>An unexpected error occurred during processing. Please try again with your file or return to the home page.</p>
+        </header>
+
+        <div class="not-found-actions">
+            <a class="cta-primary-btn" href="{% url 'home' %}">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-home"></use></svg>
+                <span>Return to Home</span>
+            </a>
+            <a class="cta-secondary-btn" href="{% url 'convert' %}">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-convert"></use></svg>
+                <span>Convert a file</span>
+            </a>
+            <a class="cta-secondary-btn" href="{% url 'compress' %}">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-compress"></use></svg>
+                <span>Compress a file</span>
+            </a>
+            <a class="cta-secondary-btn" href="{% url 'merge' %}">
+                <svg class="ui-icon" aria-hidden="true"><use href="#icon-merge"></use></svg>
+                <span>Merge files</span>
+            </a>
+        </div>
+    </div>
+</section>
+{% endblock %}

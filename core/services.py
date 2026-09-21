@@ -158,11 +158,34 @@ def get_capabilities():
 
 
 def module_available(name):
+    if name == "fitz":
+        name = "pymupdf"
     try:
-        __import__(name)
+        import warnings
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
+            __import__(name)
         return True
     except ImportError:
+        if name == "pymupdf":
+            try:
+                import fitz
+                return True
+            except ImportError:
+                return False
         return False
+
+
+def get_fitz():
+    try:
+        import pymupdf as fitz
+        return fitz
+    except ImportError:
+        try:
+            import fitz
+            return fitz
+        except ImportError as exc:
+            raise ConversionError("MISSING_ENGINE", "PDF processing requires PyMuPDF.") from exc
 
 
 def detect_file(uploaded):
@@ -351,10 +374,7 @@ class PDFConverter:
         self.workdir = Path(workdir)
 
     def _open(self, job):
-        try:
-            import fitz
-        except ImportError as exc:
-            raise ConversionError("MISSING_ENGINE", "PDF conversion requires PyMuPDF.") from exc
+        fitz = get_fitz()
         return fitz.open(stream=read_upload(job.original), filetype="pdf")
 
     def convert(self, job, target, quality=80):
@@ -442,7 +462,7 @@ class PDFConverter:
         return ConversionResult(f"{safe_stem(job.original_name)}-thuna.docx", buffer.getvalue(), "docx")
 
     def to_images(self, job, target, quality):
-        import fitz
+        fitz = get_fitz()
 
         target = "jpg" if target == "jpeg" else target
         doc = self._open(job)
@@ -471,7 +491,7 @@ class PDFConverter:
     def ocr_pdf(self, job):
         if not get_capabilities()["ocr"]:
             raise ConversionError("OCR_REQUIRED", ERROR_MESSAGES["OCR_REQUIRED"])
-        import fitz
+        fitz = get_fitz()
         import pytesseract
 
         doc = self._open(job)
@@ -663,7 +683,7 @@ class DocumentConverter:
                 "html",
             )
         if target == "pdf":
-            import fitz
+            fitz = get_fitz()
 
             if not rows:
                 raise ConversionError("CONVERSION_FAILED", "Worksheet contains no readable rows.")
@@ -794,10 +814,7 @@ class DocumentConverter:
             from docx.table import Table
         except ImportError as exc:
             raise ConversionError("MISSING_ENGINE", "DOCX conversion requires python-docx.") from exc
-        try:
-            import fitz
-        except ImportError as exc:
-            raise ConversionError("MISSING_ENGINE", "PDF output requires PyMuPDF.") from exc
+        fitz = get_fitz()
 
         doc_in = Document(BytesIO(read_upload(job.original)))
         doc_out = fitz.open()
@@ -970,10 +987,7 @@ class DocumentConverter:
             from openpyxl import load_workbook
         except ImportError as exc:
             raise ConversionError("MISSING_ENGINE", "XLSX conversion requires openpyxl.") from exc
-        try:
-            import fitz
-        except ImportError as exc:
-            raise ConversionError("MISSING_ENGINE", "PDF output requires PyMuPDF.") from exc
+        fitz = get_fitz()
         wb = load_workbook(BytesIO(read_upload(job.original)), data_only=True)
         ws = wb.active
         rows = [list(r) for r in ws.iter_rows(values_only=True) if any(c is not None for c in r)]
@@ -1067,10 +1081,7 @@ class DocumentConverter:
             from pptx import Presentation
         except ImportError as exc:
             raise ConversionError("MISSING_ENGINE", "PPTX conversion requires python-pptx.") from exc
-        try:
-            import fitz
-        except ImportError as exc:
-            raise ConversionError("MISSING_ENGINE", "PDF output requires PyMuPDF.") from exc
+        fitz = get_fitz()
         prs = Presentation(BytesIO(read_upload(job.original)))
         doc_out = fitz.open()
         page_w, page_h = 842.0, 474.0
@@ -1219,10 +1230,7 @@ class DocumentConverter:
         return ConversionResult(f"{safe_stem(job.original_name)}-thuna.xlsx", buffer.getvalue(), "xlsx")
 
     def csv_to_pdf(self, job):
-        try:
-            import fitz
-        except ImportError as exc:
-            raise ConversionError("MISSING_ENGINE", "PDF rendering requires PyMuPDF.") from exc
+        fitz = get_fitz()
         text = read_upload(job.original).decode("utf-8", errors="replace")
         rows = list(csv.reader(StringIO(text)))
         if not rows:
@@ -1515,10 +1523,7 @@ def safe_extract_path(base_dir, member_name):
 
 
 def text_to_pdf(text, name):
-    try:
-        import fitz
-    except ImportError as exc:
-        raise ConversionError("MISSING_ENGINE", "PDF output requires PyMuPDF.") from exc
+    fitz = get_fitz()
     doc = fitz.open()
     page = doc.new_page(width=595, height=842)
     y = 50
@@ -1544,8 +1549,7 @@ def validate_output(data, output_format):
             with Image.open(BytesIO(data)) as image:
                 image.verify()
         elif fmt == "pdf":
-            import fitz
-
+            fitz = get_fitz()
             doc = fitz.open(stream=data, filetype="pdf")
             if doc.page_count < 1:
                 raise ConversionError("OUTPUT_VALIDATION_FAILED", "The output PDF has no pages.")
@@ -1638,10 +1642,7 @@ def process_zip(job):
 def process_merge(job, files, output_format, quality):
     if output_format and normalize_ext(output_format) != "pdf":
         raise ConversionError("UNSUPPORTED_FORMAT", "Merged files are exported as PDF.")
-    try:
-        import fitz
-    except ImportError as exc:
-        raise ConversionError("MISSING_ENGINE", "File merging requires PyMuPDF.") from exc
+    fitz = get_fitz()
     merged = fitz.open()
     try:
         for uploaded in files:

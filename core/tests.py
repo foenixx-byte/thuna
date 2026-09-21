@@ -174,7 +174,10 @@ class ConversionServiceTests(TestCase):
         self.assertEqual(job.status, ProcessingJob.Status.SUCCESS)
 
     def test_pdf_to_docx_preserves_content(self):
-        import fitz
+        try:
+            import pymupdf as fitz
+        except ImportError:
+            import fitz
         import docx
         # Create a clean test PDF with multiple structured paragraphs
         doc_pdf = fitz.open()
@@ -202,7 +205,10 @@ class ConversionServiceTests(TestCase):
         self.assertIn("Numerical data 12345.67", all_text)
 
     def test_pdf_to_doc_format(self):
-        import fitz
+        try:
+            import pymupdf as fitz
+        except ImportError:
+            import fitz
         doc_pdf = fitz.open()
         page = doc_pdf.new_page(width=595, height=842)
         page.insert_text((50, 80), "DOC format test.", fontname="helv", fontsize=14)

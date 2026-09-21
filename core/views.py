@@ -1,8 +1,10 @@
 import logging
+from django import forms
 from django.conf import settings
 from django.http import FileResponse, Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
-from django import forms
+from django.urls import reverse
+
 from .forms import UploadForm, validate_upload
 from .models import ProcessingJob
 from .services import ConversionRouter, get_capabilities, process_convert, process_merge, save_failure
@@ -24,9 +26,6 @@ def home(request):
     jobs = ProcessingJob.objects.filter(session_key=session_key(request), status__in=["success", "completed"])[:4]
     saved = sum(max(0, job.original_size - job.result_size) for job in jobs)
     return render(request, "core/home.html", {"jobs": jobs, "saved": saved})
-
-
-from django.urls import reverse
 
 
 def compressor(request, mode="compress"):
@@ -182,4 +181,8 @@ def robots_txt(request):
 
 def custom_404(request, exception=None):
     return render(request, "404.html", status=404)
+
+
+def custom_500(request):
+    return render(request, "500.html", status=500)
 

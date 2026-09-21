@@ -11,7 +11,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         checks = [
             ("Pillow", module_available("PIL")),
-            ("PyMuPDF", module_available("fitz")),
+            ("PyMuPDF", module_available("pymupdf") or module_available("fitz")),
             ("python-docx", module_available("docx")),
             ("openpyxl", module_available("openpyxl")),
             ("python-pptx", module_available("pptx")),
